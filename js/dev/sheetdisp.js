@@ -15,38 +15,40 @@ var loadBlob = function (blobs) {
 	console.info(actionBlob);
 	// Should be disabled once finished dev cycle
 	self.blobExpose = actionBlob;
-	tableElement = document.createElement("table");
-	if (tableBody) {
-		tableBody.remove();
-		tableBody = false;
-	};
-	tableBody = tableElement.createTBody();
-	actionBlob.get("text").then((t) => {
-		sheetHandler = new SheetParser(t);
-		let nameParts = actionBlob.name.split(".");
-		try {
-			sheetHandler.import[nameParts[nameParts.length - 1].toLowerCase()]();
-			sheetHandler.sheet.forEach((e1) => {
-				let tableLine = document.createElement("tr");
-				e1.forEach((e2) => {
-					let tableCell = document.createElement("td");
-					tableCell.innerText = e2;
-					tableLine.appendChild(tableCell);
-				});
-				tableBody.appendChild(tableLine);
-			});
-			if (!displayed) {
-				document.body.appendChild(tableElement);
-				displayed = true;
-			};
-		} catch (err) {
-			let y1 = err.stack;
-			while (y1.indexOf("\n") != -1) {
-				y1 = y1.replace("\n", "<br/>");
-			};
-			document.body.innerHTML = y1;
+	if (!displayed) {
+		tableElement = document.createElement("table");
+		if (tableBody) {
+			tableBody.remove();
+			tableBody = false;
 		};
-	});
+		tableBody = tableElement.createTBody();
+		actionBlob.get("text").then((t) => {
+			sheetHandler = new SheetParser(t);
+			let nameParts = actionBlob.name.split(".");
+			try {
+				sheetHandler.import[nameParts[nameParts.length - 1].toLowerCase()]();
+				sheetHandler.sheet.forEach((e1) => {
+					let tableLine = document.createElement("tr");
+					e1.forEach((e2) => {
+						let tableCell = document.createElement("td");
+						tableCell.innerText = e2;
+						tableLine.appendChild(tableCell);
+					});
+					tableBody.appendChild(tableLine);
+				});
+				if (!displayed) {
+					document.body.appendChild(tableElement);
+					displayed = true;
+				};
+			} catch (err) {
+				let y1 = err.stack;
+				while (y1.indexOf("\n") != -1) {
+					y1 = y1.replace("\n", "<br/>");
+				};
+				document.body.innerHTML = y1;
+			};
+		});
+	};
 };
 
 // Interactive
